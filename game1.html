@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<title>Starship Landing</title>
+<style>
+#container {
+  width: 1000px;
+  height: 500px;
+  position: relative;
+  background-image: url("land.png");
+}
+#animate {
+  border-bottom: 20px solid red;
+  border-width:30px;
+  width: 20px;
+  height: 20px;
+  left: 100px;
+  top:470px;
+  position: absolute;
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+}
+#landingpos{
+  border-left: 0px solid transparent;
+  border-right: 0px solid transparent;
+  border-bottom: 0px solid red;
+  border-width:20px;
+  width: 180px;
+  height: 500px;
+  right: 200px;
+  position: absolute;
+
+}
+.flex-container {
+  display: flex;
+  justify-content: space-evenly;
+  background-color: Blue;
+}
+
+.flex-container > a {
+  background-color: #f1f1f1;
+  margin: 10px;
+  padding: 20px;
+  font-size: 20px;
+}
+</style>
+<body>
+<nav class="flex-container">
+
+    <a href="game1.html">Starship Landing</a>
+    <a href="index.html">Break The Wall</a>
+    <a href="game2.html">Avoid And Eat</a>
+</nav>
+Move  LEFT using LEFT_KEY,
+Move  RIGHT using RIGHT_KEY,
+Move  rotate clockwise  using UP_KEY ,
+Move  Anti-clockwise  using DOWN_KEY
+<p><button onclick="myMove()">START</button></p>
+
+<div id ="container">
+    <div id ="animate"></div>
+    <div id="landingpos"></div>
+</div>
+
+<script>
+let moveRate = 9;
+let turnRate = 1;
+let x=80;
+let y=500;
+let dx = 2;
+let dy = -2;
+let angle = 0;
+var speedX = 0;
+var speedY = 0;
+var gravity = 0.05;
+var downgravity=0.000000001;
+var gravitySpeed = 0;
+var flag=0;
+var intervalID;
+
+function myMove() {
+moveRate = 20;
+turnRate = 5;
+x=100;
+y=460;
+dx = 2;
+dy = -2;
+angle = 0;
+speedX = 0;
+speedY = 0;
+gravity = 0.005;
+downgravity = 0.000000001;
+gravitySpeed = 0;
+flag=0;
+const elem = document.getElementById("animate");
+function frame() {
+
+    if (y == 0 || y>=461) {
+      clearInterval(intervalID);
+    } else {
+       console.log(y);
+       if(y>20 && flag==0){
+      gravitySpeed +=gravity;
+      x += speedX;
+      y += speedY - gravitySpeed;
+
+      elem.style.top = y + "px";
+      elem.style.left = x + "px";
+      console.log(x+" "+y);
+      if(y<20){
+      flag=1;
+      angle=90;
+      elem.style.transform = 'rotate(90deg)';
+
+      }
+       }else{
+      gravitySpeed +=downgravity;
+      x += speedX;
+      y += speedY + gravitySpeed-1.5;
+
+      elem.style.top = y + "px";
+      elem.style.left = x + "px";
+      console.log(x+" "+y);
+       }
+    }
+  }
+function refresh() {
+  x = x - 5;
+  y = y - 5;
+    elem.style.transform = 'rotate('+angle+'deg)';
+}
+
+function updatePosition(moveRate1){
+      x += moveRate1;
+}
+
+window.addEventListener("keydown", function(event) {
+  if (event.defaultPrevented) {
+    return; // Do nothing if event already handled
+  }
+
+  switch(event.code) {
+    case "KeyS":
+    case "ArrowDown":
+      angle -= turnRate;
+      refresh();
+      break;
+    case "KeyW":
+    case "ArrowUp":
+      angle += turnRate;
+      refresh();
+      break;
+    case "KeyA":
+    case "ArrowLeft":
+      updatePosition(-moveRate);
+      break;
+    case "KeyD":
+    case "ArrowRight":
+      updatePosition(+moveRate);
+      break;
+  }
+
+
+
+  // Consume the event so it doesn't get handled twice
+  event.preventDefault();
+}, true);
+
+function draw() {
+<!--clearInterval(intervalID);-->
+frame();
+}
+intervalID = setInterval(draw, 5);
+}
+</script>
+
+</body>
+</html>

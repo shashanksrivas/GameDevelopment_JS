@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Avoid And Eat</title>
+<style>
+
+      #snakeboard {
+        position: absolute;
+        margin-top: 40%;
+        margin-left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      #score {
+        text-align: center;
+        font-size: 40px;
+      }
+.flex-container {
+  display: flex;
+  justify-content: space-evenly;
+  background-color: Blue;
+}
+
+.flex-container1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+
+}
+
+.flex-container > a {
+  background-color: #f1f1f1;
+  margin: 10px;
+  padding: 20px;
+  font-size: 20px;
+}
+</style>
+</head>
+<body>
+<div class="flex-container1">
+    <nav class="flex-container">
+
+        <a href="game1.html">Starship Landing</a>
+        <a href="index.html">Break The Wall</a>
+        <a href="game2.html">Avoid And Eat</a>
+    </nav>
+    Move  LEFT using LEFT_KEY <br>
+    Move  RIGHT using RIGHT_KEY<br>
+    Move  UP using UP_KEY<br>
+    Move  DOWN using DOWN_KEY<br>
+
+    <p><button onclick="myMove()">START</button></p>
+    <div id="score">0</div>
+    <canvas id="snakeboard" width="400" height="400"></canvas>
+
+</div>
+
+<script>
+const board_border = 'black';
+const board_background = "white";
+const snake_col = 'lightblue';
+const snake_border = 'darkblue';
+// Horizontal velocity
+let dx = 10;
+// Vertical velocity
+let dy = 0;
+var intervalID;
+let score = 0;
+let changing_directionmy = false;
+let food_x;
+let food_y;
+// Horizontal velocity
+let dxmy = 10;
+// Vertical velocity
+let dymy = 0;
+
+const snakeboard = document.getElementById("snakeboard");
+// Return a two dimensional drawing context
+const snakeboard_ctx = snakeboard.getContext("2d");
+let snake = [  {x: 200, y: 200},  {x: 190, y: 200},  {x: 180, y: 200},  {x: 170, y: 200},  {x: 160, y: 200}];
+
+    let snakemy = [
+      {x: 200, y: 300},
+      {x: 190, y: 300},
+      {x: 180, y: 300},
+      {x: 170, y: 300},
+      {x: 160, y: 300}
+    ]
+var fast=300;
+function myMove(){
+dx = 10;
+dy = 0;
+score = 0;
+changing_directionmy = false;
+food_x;
+food_y;
+dxmy = 10;
+dymy = 0;
+snake = [  {x: 200, y: 200},  {x: 190, y: 200},  {x: 180, y: 200},  {x: 170, y: 200},  {x: 160, y: 200}];
+
+snakemy = [
+      {x: 200, y: 300},
+      {x: 190, y: 300},
+      {x: 180, y: 300},
+      {x: 170, y: 300},
+      {x: 160, y: 300}
+    ]
+fast=300;
+
+
+main();
+   gen_food();
+    document.addEventListener("keydown", change_directionmy);
+    // main function called repeatedly to keep the game running
+    function main() {
+        var status=has_game_ended();
+         changing_directionmy = false;
+<!--        console.log(status,snake[0].x,snake[0].y,dx,dy,snakeboard.width,snakeboard.height);-->
+
+        if(status===1){
+            if(snake[0].y===0){
+            dy=10;
+            dx=0;
+            }
+            else if(snake[0].y===snakeboard.height-10){
+            dy=-10;
+            dx=0;
+            }else{
+            var temp=Math.floor(Math.random() * 4);
+            dy=temp%2===1?-10:10;
+            dx=0;
+            }
+        }else if(status===2){
+            if(snake[0].y===0){
+            dy=10;
+            dx=0;
+            }
+            else if(snake[0].y===snakeboard.height-10){
+            dy=-10;
+            dx=0;
+            }else{
+            var temp=Math.floor(Math.random() * 4);
+            dy=temp%2===1?-10:10;
+            dx=0;
+            }
+        }else if(status===3){
+            if(snake[0].x===0){
+            dy=0;
+            dx=10;
+            }
+            else if(snake[0].x===snakeboard.width-10){
+            dx=-10;
+            dy=0;
+            }else{
+            var temp=Math.floor(Math.random() * 4);
+            dx=temp%2===1?-10:10;
+            dy=0;
+            }
+        }else if(status===4){
+            if(snake[0].x===0){
+            dy=0;
+            dx=10;
+            }
+            else if(snake[0].x===snakeboard.width-10){
+            dx=-10;
+            dy=0;
+            }else{
+            var temp=Math.floor(Math.random() * 4);
+            dx=temp%2===1?-10:10;
+            dy=0;
+            }
+        }
+        else if(status===0){
+                if(snake[0].y===0){
+                var temp=Math.floor(Math.random() * 4);
+                dy=temp%2===1?10:dy;
+                dx=dx;
+                }
+                if(snake[0].y===snakeboard.height-10){
+                var temp=Math.floor(Math.random() * 4);
+                dy=temp%2===1?-10:dy;
+                dx=dx;
+                }
+                if(snake[0].x===snakeboard.width-10){
+                var temp=Math.floor(Math.random() * 4);
+                dx=temp%2===1?-10:dx;
+                dy=dy;
+                }
+                if(snake[0].x===0 ){
+                console.log("yes")
+                var temp=Math.floor(Math.random() * 4);
+                console.log(temp)
+                dx=temp%2===1?10:dx;
+                dy=dy;
+                }
+        }
+
+function getDifference(snake2, snake4) {
+          return snake2.filter(object1 => {
+            return snake4.some(object2 => {
+              return object1.x === object2.x && object1.y===object2.y;
+            });
+          });
+        }
+        var status1=getDifference(snake,snakemy);
+        console.log(status1)
+        console.log(snake);
+        console.log(snakemy);
+        if(status1.length>0){
+        alert("GAME OVER collided with themselves")
+        }else{
+        if((snakemy[0].x<0 || snakemy[0].x>=snakeboard.width) || (snakemy[0].y<0 || snakemy[0].y>=snakeboard.height)){
+        alert("GAME OVER collided with wall");
+        clearInterval(intervalID);
+        return;
+        }
+
+        intervalID = setTimeout(function onTick() {
+        clear_board();
+        drawFood();
+        move_snake();
+        drawSnake();
+        move_snakemy();
+        drawSnakemy();
+        main();
+        }, 100)
+
+        }
+
+    }
+
+    function clear_board() {
+      //  Select the colour to fill the drawing
+      snakeboard_ctx.fillStyle = board_background;
+      //  Select the colour for the border of the canvas
+      snakeboard_ctx.strokestyle = board_border;
+      // Draw a "filled" rectangle to cover the entire canvas
+      snakeboard_ctx.fillRect(0, 0, snakeboard.width, snakeboard.height);
+      // Draw a "border" around the entire canvas
+      snakeboard_ctx.strokeRect(0, 0, snakeboard.width, snakeboard.height);
+    }
+
+
+
+function drawSnakePart(snakePart)
+{
+  snakeboard_ctx.fillStyle = 'lightblue';
+  snakeboard_ctx.strokestyle = 'darkblue';
+  snakeboard_ctx.fillRect(snakePart.x, snakePart.y, 10, 10);
+  snakeboard_ctx.strokeRect(snakePart.x, snakePart.y, 10, 10);
+}
+
+/*Function that prints the parts*/
+function drawSnake()
+{
+  snake.forEach(drawSnakePart);
+}
+
+    function move_snake() {
+      // Create the new Snake's head
+      const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+      // Add the new head to the beginning of snake body
+      snake.unshift(head);
+      snake.pop();
+    }
+
+
+function drawSnakePartmy(snakePart)
+{
+  snakeboard_ctx.fillStyle = 'lightblue';
+  snakeboard_ctx.strokestyle = 'darkblue';
+  snakeboard_ctx.fillRect(snakePart.x, snakePart.y, 10, 10);
+  snakeboard_ctx.strokeRect(snakePart.x, snakePart.y, 10, 10);
+}
+
+/*Function that prints the parts*/
+function drawSnakemy()
+{
+  snakemy.forEach(drawSnakePartmy);
+}
+
+
+    function has_game_ended() {
+      for (let i = 4; i < snake.length; i++) {
+        if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) return 5;
+      }
+      var hitLeftWall = 0;
+      var hitRightWall = 0;
+      var hitToptWall = 0;
+      var hitBottomWall = 0;
+
+      if(snake[0].x+dx < 0){
+        hitLeftWall=1;
+        return hitLeftWall;
+      }
+      if(snake[0].x+dx > snakeboard.width - 10){
+        hitRightWall=2;
+        return hitRightWall;
+      }
+      if(snake[0].y+dy < 0){
+        hitToptWall=3;
+        return hitToptWall;
+      }
+      if(snake[0].y+dy > snakeboard.height - 10){
+         hitBottomWall=4;
+         return hitBottomWall;
+      }
+      return 0;
+    }
+
+    function has_game_endedmy() {
+      for (let i = 4; i < snakemy.length; i++) {
+        if (snakemy[i].x === snakemy[0].x && snakemy[i].y === snakemy[0].y) return true
+      }
+      const hitLeftWall = snakemy[0].x < 0;
+      const hitRightWall = snakemy[0].x > snakeboard.width - 10;
+      const hitToptWall = snakemy[0].y < 0;
+      const hitBottomWall = snakemy[0].y > snakeboard.height - 10;
+      return hitLeftWall || hitRightWall || hitToptWall || hitBottomWall
+    }
+
+    function change_directionmy(event) {
+      const LEFT_KEY = 37;
+      const RIGHT_KEY = 39;
+      const UP_KEY = 38;
+      const DOWN_KEY = 40;
+
+    // Prevent the snake from reversing
+
+      if (changing_directionmy) return;
+      changing_directionmy = true;
+      const keyPressed = event.keyCode;
+      const goingUp = dymy === -10;
+      const goingDown = dymy === 10;
+      const goingRight = dxmy === 10;
+      const goingLeft = dxmy === -10;
+      if (keyPressed === LEFT_KEY && !goingRight) {
+        dxmy = -10;
+        dymy = 0;
+      }
+      if (keyPressed === UP_KEY && !goingDown) {
+        dxmy = 0;
+        dymy = -10;
+      }
+      if (keyPressed === RIGHT_KEY && !goingLeft) {
+        dxmy = 10;
+        dymy = 0;
+      }
+      if (keyPressed === DOWN_KEY && !goingUp) {
+        dxmy = 0;
+        dymy = 10;
+      }
+    }
+function random_food(min, max)
+{
+   return Math.round((Math.random() * (max-min) + min) / 10) * 10;
+}
+
+function gen_food()
+{
+   food_x = random_food(0, snakeboard.width - 10);
+   food_y = random_food(0, snakeboard.height - 10);
+   snakemy.forEach(function has_snake_eaten_food(part) {
+        const has_eaten = part.x == food_x && part.y == food_y;
+        if (has_eaten) gen_food();
+      });
+}
+function drawFood()
+{
+      snakeboard_ctx.fillStyle = 'lightgreen';
+      snakeboard_ctx.strokestyle = 'darkgreen';
+      snakeboard_ctx.fillRect(food_x, food_y, 10, 10);
+      snakeboard_ctx.strokeRect(food_x, food_y, 10, 10);
+}
+
+function move_snakemy()
+ {
+      // Create the new Snake's head
+      const head = {x: snakemy[0].x + dxmy, y: snakemy[0].y + dymy};
+      // Add the new head to the beginning of snake body
+      snakemy.unshift(head);
+      const has_eaten_food = snakemy[0].x === food_x && snakemy[0].y === food_y;
+      if (has_eaten_food) {
+        // Increase score
+        score += 10;
+        // Display score on screen
+        document.getElementById('score').innerHTML = score;
+        // Generate new food location
+        gen_food();
+      } else {
+        // Remove the last part of snake body
+        snakemy.pop();
+      }
+}
+}
+
+</script>
+</body>
+</html>
